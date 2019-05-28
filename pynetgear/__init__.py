@@ -8,8 +8,11 @@ import xml.etree.ElementTree as ET
 from datetime import timedelta
 import re
 import sys
+from locale import setlocale, atof, LC_NUMERIC
 
 import requests
+
+setlocale(LC_NUMERIC, '')
 
 
 # define regex to filter invalid XML codes
@@ -254,7 +257,7 @@ class Netgear(object):
                 This function parses the different values and returns
                 (total, avg), timedelta or a plain float
             """
-            def tofloats(lst): return (float(t) for t in lst)
+            def tofloats(lst): return (atof(t) for t in lst)
             try:
                 if "/" in text:  # "6.19/0.88" total/avg
                     return tuple(tofloats(text.split('/')))
@@ -262,7 +265,7 @@ class Netgear(object):
                     hour, mins = tofloats(text.split(':'))
                     return timedelta(hours=hour, minutes=mins)
                 else:
-                    return float(text)
+                    return atof(text)
             except ValueError:
                 return None
 
